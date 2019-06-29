@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RemoteMappingsManager">
+    <list>
+      <list>
+        <remote-mappings server-id="python@docker://match96/tfgpubase:py37/python3">
+          <settings>
+            <list>
+              <mapping local-root="$PROJECT_DIR$" remote-root="/home/matech/projects/cifar10" />
+            </list>
+          </settings>
+        </remote-mappings>
+        <remote-mappings server-id="python@docker://match96/tfgpubase:py37/python">
+          <settings>
+            <list>
+              <mapping local-root="$PROJECT_DIR$" remote-root="/home/matech/projects/cifar10" />
+            </list>
+          </settings>
+        </remote-mappings>
+        <remote-mappings server-id="python@docker://tensorflow/tensorflow:latest-gpu-py3/python">
+          <settings>
+            <list>
+              <mapping local-root="$PROJECT_DIR$" remote-root="/opt/project" />
+            </list>
+          </settings>
+        </remote-mappings>
+        <remote-mappings server-id="python@docker://matech96/tfgpubase:tf1.14.0/python">
+          <settings>
+            <list>
+              <mapping local-root="$PROJECT_DIR$" remote-root="/opt/project" />
+            </list>
+          </settings>
+        </remote-mappings>
+      </list>
+    </list>
+  </component>
+</project>

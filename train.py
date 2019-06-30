@@ -3,13 +3,15 @@ import os
 import keras
 from comet_ml import Experiment
 from keras import Sequential
-from keras.callbacks import CSVLogger
+from keras import regularizers
+from keras.callbacks import CSVLogger, EarlyStopping
 from keras.datasets import cifar10
 from keras.layers import Conv2D, Activation, MaxPooling2D, Dropout, Flatten, Dense
 from keras.optimizers import Adam
 
 
-def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment: Experiment) -> None:
+def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment: Experiment,
+                  regularization: regularizers.Regularizer) -> None:
     name = experiment.get_key()
     num_classes = 10
     save_dir = os.path.join(os.getcwd(), 'results')
@@ -26,21 +28,21 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     model.add(Conv2D(32, (3, 3), padding='same',
                      input_shape=x_train.shape[1:]))
     model.add(Activation('relu'))
-    model.add(Conv2D(32, (3, 3)))
+    model.add(Conv2D(32, (3, 3), kernel_regularizer=regularization))
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
-    model.add(Conv2D(64, (3, 3), padding='same'))
+    model.add(Conv2D(64, (3, 3), padding='same', kernel_regularizer=regularization))
     model.add(Activation('relu'))
-    model.add(Conv2D(64, (3, 3)))
+    model.add(Conv2D(64, (3, 3), kernel_regularizer=regularization))
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
     model.add(Flatten())
-    model.add(Dense(512))
+    model.add(Dense(512, kernel_regularizer=regularization))
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
-    model.add(Dense(num_classes))
+    model.add(Dense(num_classes, kernel_regularizer=regularization))
     model.add(Activation('softmax'))
     opt = Adam(lr=learning_rate)
     model.compile(loss='categorical_crossentropy',
@@ -51,7 +53,8 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     x_train /= 255
     x_test /= 255
     csv_cb = CSVLogger(log_path)
-    callbacks = [csv_cb]
+    early_stopping = EarlyStopping('val_acc', patience=250, restore_best_weights=True)
+    callbacks = [csv_cb, early_stopping]
     model.fit(x_train, y_train,
               batch_size=batch_size,
               epochs=epochs,

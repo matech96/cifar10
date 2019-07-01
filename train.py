@@ -11,7 +11,7 @@ from keras.optimizers import Adam
 
 
 def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment: Experiment,
-                  regularization: regularizers.Regularizer) -> None:
+                  regularization: regularizers.Regularizer = None) -> None:
     name = experiment.get_key()
     num_classes = 10
     save_dir = os.path.join(os.getcwd(), 'results')

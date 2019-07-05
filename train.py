@@ -180,14 +180,14 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
                   optimizer=opt,
                   metrics=['accuracy'])
     plot_model(model, model_plot_file_name, show_shapes=True)
-    experiment.log_asset(model_plot_file_name)
+    experiment.log_image(model_plot_file_name)
     os.remove(model_plot_file_name)
     x_train = x_train.astype('float32')
     x_test = x_test.astype('float32')
     x_train /= 255
     x_test /= 255
     csv_cb = CSVLogger(log_path)
-    early_stopping = EarlyStopping('val_acc', patience=250, restore_best_weights=True)
+    early_stopping = EarlyStopping('val_acc', patience=250, restore_best_weights=True, verbose=2)
     callbacks = [csv_cb, early_stopping]
     model.fit(x_train, y_train,
               batch_size=batch_size,
@@ -199,6 +199,6 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     model.save(model_path)
     experiment.log_asset(model_path)
     # Score trained model.
-    scores = model.evaluate(x_test, y_test, verbose=1)
+    scores = model.evaluate(x_test, y_test, verbose=2)
     print('Test loss:', scores[0])
     print('Test accuracy:', scores[1])

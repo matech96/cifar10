@@ -13,6 +13,8 @@ from keras.utils import plot_model
 import numpy as np
 from typing import Callable
 
+from mutil import ElapsedTime
+
 
 def get_model(input_shape: np.ndarray, num_classes: int, regularization: regularizers.Regularizer):
     model = Sequential()
@@ -223,7 +225,10 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     experiment.log_metrics({"loss": scores[0],
                             "acc": scores[1]}, prefix="dev")
 
-    scores = model.evaluate(x_test, y_test, verbose=2)
+    timer = ElapsedTime("Test prediction")
+    with timer:
+        scores = model.evaluate(x_test, y_test, verbose=2)
+    experiment.log_metric("test_inference_time", timer.elapsed_time_ms)
     print('Test loss:', scores[0])
     print('Test accuracy:', scores[1])
     experiment.log_metrics({"loss": scores[0],

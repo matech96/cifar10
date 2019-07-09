@@ -10,6 +10,14 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="bs_cifar10_local">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/projects/cifar10" local="$PROJECT_DIR$" web="/" />
+            <mapping local="" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="bs_test_docker">
         <serverdata>
           <mappings>

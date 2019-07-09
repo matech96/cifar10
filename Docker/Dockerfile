@@ -5,3 +5,4 @@ RUN pip3 install bokeh
 RUN pip3 install comet_ml
 RUN pip3 install pydot
 RUN apt-get install -y graphviz
+RUN pip3 install holoviews

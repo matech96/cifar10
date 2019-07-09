@@ -11,8 +11,8 @@ config = {
     },
 
     "parameters": {
-        "batch_size": {"type": "discrete", "values": [32, 64, 128]},
-        "learning_rate": {"type": "discrete", "values": [0.01, 0.001, 0.0001]},
+        "batch_size": {"type": "discrete", "values": [8, 16, 32]},
+        "learning_rate": {"type": "discrete", "values": [0.0001, 0.00001]},
     },
 }
 optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10_block5_bs_lr")

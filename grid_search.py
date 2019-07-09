@@ -4,20 +4,18 @@ from keras import regularizers
 
 config = {
     "algorithm": "grid",
-    "name": "5block batch size and learning rate",
+    "name": "Dropout testing",
 
     "spec": {
         "metric": "acc",
     },
 
     "parameters": {
-        "batch_size": {"type": "discrete", "values": [8, 16, 32]},
-        "learning_rate": {"type": "discrete", "values": [0.0001, 0.00001]},
+        "dropout_rate": {"type": "discrete", "values": [0, 0.25, 0.5, 0.75, 0.9]},
     },
 }
-optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10_block5_bs_lr")
+optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10_dropout")
 
 for experiment in optimizer.get_experiments():
-    batch_size = experiment.get_parameter("batch_size")
-    learning_rate = experiment.get_parameter("learning_rate")
-    train_cifar10(batch_size=batch_size, learning_rate=learning_rate, epochs=1000, experiment=experiment, model_fnc=get_model_5block)
+    dropout_rate = experiment.get_parameter("dropout_rate")
+    train_cifar10(batch_size=64, learning_rate=0.001, epochs=1000, experiment=experiment, dropout_rate=dropout_rate)

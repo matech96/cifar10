@@ -14,7 +14,7 @@ config = {
         "dropout_rate": {"type": "discrete", "values": [0.55, 0.6, 0.65, 0.7]},
     },
 }
-optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10_dropout")
+optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-06-dropout")
 
 for experiment in optimizer.get_experiments():
     dropout_rate = experiment.get_parameter("dropout_rate")

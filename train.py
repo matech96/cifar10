@@ -16,11 +16,10 @@ from typing import Callable
 from mutil import ElapsedTime
 
 
-def get_model(input_shape: np.ndarray, num_classes: int, regularization: regularizers.Regularizer,
-              dropout_rate: float = 0.25):
+def get_model(regularization: regularizers.Regularizer = None, dropout_rate: float = 0.25):
     model = Sequential()
     model.add(Conv2D(32, (3, 3), padding='same',
-                     input_shape=input_shape))
+                     input_shape=(32, 32, 3)))
     model.add(Activation('relu'))
     model.add(Conv2D(32, (3, 3), kernel_regularizer=regularization))
     model.add(Activation('relu'))
@@ -36,16 +35,15 @@ def get_model(input_shape: np.ndarray, num_classes: int, regularization: regular
     model.add(Dense(512, kernel_regularizer=regularization))
     model.add(Activation('relu'))
     model.add(Dropout(dropout_rate))
-    model.add(Dense(num_classes, kernel_regularizer=regularization))
+    model.add(Dense(10, kernel_regularizer=regularization))
     model.add(Activation('softmax'))
     return model
 
 
-def get_model_same(input_shape: np.ndarray, num_classes: int, regularization: regularizers.Regularizer,
-                   dropout_rate: float = 0.25):
+def get_model_same(regularization: regularizers.Regularizer = None, dropout_rate: float = 0.25):
     model = Sequential()
     model.add(Conv2D(32, (3, 3), padding='same',
-                     input_shape=input_shape))
+                     input_shape=(32, 32, 3)))
     model.add(Activation('relu'))
     model.add(Conv2D(32, (3, 3), padding='same', kernel_regularizer=regularization))
     model.add(Activation('relu'))
@@ -61,16 +59,15 @@ def get_model_same(input_shape: np.ndarray, num_classes: int, regularization: re
     model.add(Dense(512, kernel_regularizer=regularization))
     model.add(Activation('relu'))
     model.add(Dropout(dropout_rate))
-    model.add(Dense(num_classes, kernel_regularizer=regularization))
+    model.add(Dense(10, kernel_regularizer=regularization))
     model.add(Activation('softmax'))
     return model
 
 
-def get_model_3block(input_shape: np.ndarray, num_classes: int, regularization: regularizers.Regularizer,
-                     dropout_rate: float = 0.25):
+def get_model_3block(regularization: regularizers.Regularizer = None, dropout_rate: float = 0.25):
     model = Sequential()
     model.add(Conv2D(32, (3, 3), padding='same',
-                     input_shape=input_shape))
+                     input_shape=(32, 32, 3)))
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(dropout_rate))
@@ -89,16 +86,15 @@ def get_model_3block(input_shape: np.ndarray, num_classes: int, regularization: 
     model.add(Dense(512, kernel_regularizer=regularization))
     model.add(Activation('relu'))
     model.add(Dropout(dropout_rate))
-    model.add(Dense(num_classes, kernel_regularizer=regularization))
+    model.add(Dense(10, kernel_regularizer=regularization))
     model.add(Activation('softmax'))
     return model
 
 
-def get_model_4block(input_shape: np.ndarray, num_classes: int, regularization: regularizers.Regularizer,
-                     dropout_rate: float = 0.25):
+def get_model_4block(regularization: regularizers.Regularizer = None, dropout_rate: float = 0.25):
     model = Sequential()
     model.add(Conv2D(32, (3, 3), padding='same',
-                     input_shape=input_shape))
+                     input_shape=(32, 32, 3)))
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(dropout_rate))
@@ -122,16 +118,15 @@ def get_model_4block(input_shape: np.ndarray, num_classes: int, regularization: 
     model.add(Dense(512, kernel_regularizer=regularization))
     model.add(Activation('relu'))
     model.add(Dropout(dropout_rate))
-    model.add(Dense(num_classes, kernel_regularizer=regularization))
+    model.add(Dense(10, kernel_regularizer=regularization))
     model.add(Activation('softmax'))
     return model
 
 
-def get_model_5block(input_shape: np.ndarray, num_classes: int, regularization: regularizers.Regularizer,
-                     dropout_rate: float = 0.25):
+def get_model_5block(regularization: regularizers.Regularizer = None, dropout_rate: float = 0.25):
     model = Sequential()
     model.add(Conv2D(32, (3, 3), padding='same',
-                     input_shape=input_shape))
+                     input_shape=(32, 32, 3)))
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(dropout_rate))
@@ -160,15 +155,13 @@ def get_model_5block(input_shape: np.ndarray, num_classes: int, regularization: 
     model.add(Dense(512, kernel_regularizer=regularization))
     model.add(Activation('relu'))
     model.add(Dropout(dropout_rate))
-    model.add(Dense(num_classes, kernel_regularizer=regularization))
+    model.add(Dense(10, kernel_regularizer=regularization))
     model.add(Activation('softmax'))
     return model
 
 
-def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment: Experiment,
-                  regularization: regularizers.Regularizer = None, dropout_rate: float = 0.0,
-                  model_fnc: Callable[
-                      [np.ndarray, int, regularizers.Regularizer, float], Sequential] = get_model) -> None:
+def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment: Experiment,                  
+                  model: Sequential = get_model()) -> None:
     model_plot_file_name = 'model.png'
     name = experiment.get_key()
     num_classes = 10
@@ -198,8 +191,6 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     x_test = X[border_dev:, ]
     y_test = Y[border_dev:, ]
 
-    input_shape = x_train.shape[1:]
-    model = model_fnc(input_shape, num_classes, regularization, dropout_rate)
     opt = Adam(lr=learning_rate)
     model.compile(loss='categorical_crossentropy',
                   optimizer=opt,

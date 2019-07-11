@@ -1,6 +1,5 @@
 from comet_ml import Optimizer
 from train import train_cifar10, get_model
-from keras import regularizers
 
 config = {
     "algorithm": "grid",
@@ -11,13 +10,15 @@ config = {
     },
 
     "parameters": {
-        "dropout_rate": {"type": "discrete", "values": [0.55, 0.6, 0.65, 0.7]},
+        "initialization": {"type": "categorical",
+                           "values": ['TruncatedNormal', 'VarianceScaling', 'glorot_normal', 'glorot_uniform',
+                                      'he_normal', 'he_uniform']},
     },
 }
-optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-06-dropout")
+optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-07-initialization")
 
 for experiment in optimizer.get_experiments():
-    dropout_rate = experiment.get_parameter("dropout_rate")
-    experiment.set_name(str(dropout_rate))
-    model = get_model(dropout_rate=dropout_rate)
+    initialization = experiment.get_parameter("initialization")
+    experiment.set_name(initialization)
+    model = get_model(dropout_rate=0.5)
     train_cifar10(batch_size=64, learning_rate=0.001, epochs=1000, experiment=experiment, model=model)

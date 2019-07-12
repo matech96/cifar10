@@ -16,8 +16,8 @@ from typing import Callable
 from mutil import ElapsedTime
 
 
-def get_model(regularization: regularizers.Regularizer = None, dropout_rate: float = 0.25,
-              initialization: str = 'glorot_uniform'):
+def get_model(regularization: regularizers.Regularizer = None, dropout_rate: float = 0.5,
+              initialization: str = 'he_normal'):
     model = Sequential()
     model.add(Conv2D(32, (3, 3), padding='same',
                      input_shape=(32, 32, 3), kernel_initializer=initialization))

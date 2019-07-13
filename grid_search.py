@@ -11,7 +11,7 @@ config = {
     },
 
     "parameters": {
-        "l1": {"type": "discrete", "values": [0.01, 0.001, 0.0001]},
+        "l1": {"type": "discrete", "values": [0]},
         "l2": {"type": "discrete", "values": [0.01, 0.001, 0.0001]},
     },
 }

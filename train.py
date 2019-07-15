@@ -11,13 +11,12 @@ from keras.layers import Conv2D, Activation, MaxPooling2D, Dropout, Flatten, Den
 from keras.optimizers import Adam
 from keras.utils import plot_model
 import numpy as np
-from typing import Callable
 
 from mutil import ElapsedTime
 
 
 def get_model(regularization: regularizers.Regularizer = None, dropout_rate: float = 0.5,
-              initialization: str = 'he_normal'):
+              initialization: str = 'VarianceScaling'):
     model = Sequential()
     model.add(Conv2D(32, (3, 3), padding='same',
                      input_shape=(32, 32, 3), kernel_initializer=initialization))
@@ -41,8 +40,8 @@ def get_model(regularization: regularizers.Regularizer = None, dropout_rate: flo
     return model
 
 
-def get_model_same(regularization: regularizers.Regularizer = None, dropout_rate: float = 0.25,
-                   initialization: str = 'he_normal'):
+def get_model_same(regularization: regularizers.Regularizer = None, dropout_rate: float = 0.5,
+                   initialization: str = 'VarianceScaling'):
     model = Sequential()
     model.add(Conv2D(32, (3, 3), padding='same',
                      input_shape=(32, 32, 3)))
@@ -66,7 +65,8 @@ def get_model_same(regularization: regularizers.Regularizer = None, dropout_rate
     return model
 
 
-def get_model_3block(regularization: regularizers.Regularizer = None, dropout_rate: float = 0.25, initialization: str = 'he_normal'):
+def get_model_3block(regularization: regularizers.Regularizer = None, dropout_rate: float = 0.5,
+                     initialization: str = 'VarianceScaling'):
     model = Sequential()
     model.add(Conv2D(32, (3, 3), padding='same',
                      input_shape=(32, 32, 3)))
@@ -93,7 +93,8 @@ def get_model_3block(regularization: regularizers.Regularizer = None, dropout_ra
     return model
 
 
-def get_model_4block(regularization: regularizers.Regularizer = None, dropout_rate: float = 0.25, initialization: str = 'he_normal'):
+def get_model_4block(regularization: regularizers.Regularizer = None, dropout_rate: float = 0.5,
+                     initialization: str = 'VarianceScaling'):
     model = Sequential()
     model.add(Conv2D(32, (3, 3), padding='same',
                      input_shape=(32, 32, 3)))
@@ -125,7 +126,8 @@ def get_model_4block(regularization: regularizers.Regularizer = None, dropout_ra
     return model
 
 
-def get_model_5block(regularization: regularizers.Regularizer = None, dropout_rate: float = 0.25, initialization: str = 'he_normal'):
+def get_model_5block(regularization: regularizers.Regularizer = None, dropout_rate: float = 0.5,
+                     initialization: str = 'VarianceScaling'):
     model = Sequential()
     model.add(Conv2D(32, (3, 3), padding='same',
                      input_shape=(32, 32, 3)))
@@ -209,7 +211,7 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
               validation_data=(x_dev, y_dev),
               shuffle=True,
               callbacks=callbacks,
-              verbose=2,
+              verbose=1,
               initial_epoch=initial_epoch)
     model.save(model_path)
     scores = model.evaluate(x_train, y_train, verbose=2)

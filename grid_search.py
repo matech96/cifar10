@@ -1,5 +1,6 @@
 from comet_ml import Optimizer
-from train import train_cifar10, get_model
+from train import train_cifar10
+from models import get_model
 
 config = {
     "algorithm": "grid",

@@ -1,7 +1,7 @@
 from comet_ml import Experiment
 
-from train import train_cifar10, \
-    get_model, get_model_same, get_model_3block, get_model_4block, get_model_5block
+from train import train_cifar10
+from models import get_model, get_model_same, get_model_3block, get_model_4block, get_model_5block
 
 model_fncs = [get_model, get_model_same, get_model_3block, get_model_4block, get_model_5block]
 experiment_names = ['base', 'same', '3block', '4block', '5block']

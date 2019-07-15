@@ -1,7 +1,8 @@
 from comet_ml import Experiment
 from keras import regularizers
 
-from train import train_cifar10, get_model
+from train import train_cifar10
+from models import get_model
 
 experiment = Experiment(api_key="cgss7piePhyFPXRw1J2uUEjkQ",
                         project_name="cifar10-07-initialization", workspace="matech96")

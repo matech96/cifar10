@@ -61,6 +61,7 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     early_stopping = EarlyStopping('val_acc', patience=250, restore_best_weights=True, verbose=2)
     callbacks = [csv_cb, early_stopping]
     model.fit_generator(training_datagen.flow(x_train, y_train, batch_size=batch_size),
+                        steps_per_epoch=len(x_train) / batch_size,
                         epochs=epochs,
                         validation_data=(x_dev, y_dev),
                         shuffle=True,

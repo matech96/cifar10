@@ -1,4 +1,6 @@
 import os
+
+from keras.preprocessing.image import ImageDataGenerator
 from sklearn.utils import shuffle
 
 from comet_ml import Experiment
@@ -15,7 +17,8 @@ from mutil import ElapsedTime
 
 
 def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment: Experiment,
-                  model: Sequential = get_model(), initial_epoch: int = 0) -> None:
+                  model: Sequential = get_model(), initial_epoch: int = 0,
+                  training_datagen: ImageDataGenerator = ImageDataGenerator()) -> None:
     model_plot_file_name = 'model.png'
     name = experiment.get_key()
     num_classes = 10
@@ -45,6 +48,8 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     x_test = X[border_dev:, ]
     y_test = Y[border_dev:, ]
 
+    training_datagen.fit(x_train)
+
     opt = Adam(lr=learning_rate)
     model.compile(loss='categorical_crossentropy',
                   optimizer=opt,
@@ -55,14 +60,13 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     csv_cb = CSVLogger(log_path)
     early_stopping = EarlyStopping('val_acc', patience=250, restore_best_weights=True, verbose=2)
     callbacks = [csv_cb, early_stopping]
-    model.fit(x_train, y_train,
-              batch_size=batch_size,
-              epochs=epochs,
-              validation_data=(x_dev, y_dev),
-              shuffle=True,
-              callbacks=callbacks,
-              verbose=2,
-              initial_epoch=initial_epoch)
+    model.fit_generator(training_datagen.flow(x_train, y_train, batch_size=batch_size),
+                        epochs=epochs,
+                        validation_data=(x_dev, y_dev),
+                        shuffle=True,
+                        callbacks=callbacks,
+                        verbose=2,
+                        initial_epoch=initial_epoch)
     model.save(model_path)
     scores = model.evaluate(x_train, y_train, verbose=2)
     print('Train loss:', scores[0])

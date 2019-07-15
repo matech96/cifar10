@@ -14,7 +14,7 @@ config = {
                        "values": [32, 33, 48, 49, 64]},
     },
 }
-optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-11-initialization")
+optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-11-batch-size-power2")
 
 for experiment in optimizer.get_experiments():
     batch_size = experiment.get_parameter("batch_size")

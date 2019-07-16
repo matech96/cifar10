@@ -6,20 +6,20 @@ from models import get_model
 
 config = {
     "algorithm": "grid",
-    "name": "Datagen - flipping",
+    "name": "Datagen - horizontal shifting",
 
     "spec": {
         "metric": "dev_acc",
+        "maxCombo": 5,
     },
 
     "parameters": {
-        "horizontal_flip": {"type": "discrete",
-                            "values": [0, 1]},
-        "vertical_flip": {"type": "discrete",
-                          "values": [0, 1]},
+        "width_shift_range": {"type": "float",
+                              "min": 0,
+                              "max": 0.5},
     },
 }
-optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-12-flipping")
+optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-13-horizontal-shifting")
 
 for experiment in optimizer.get_experiments():
     horizontal_flip = experiment.get_parameter("horizontal_flip")

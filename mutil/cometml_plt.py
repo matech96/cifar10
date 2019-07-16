@@ -12,7 +12,7 @@ def grid_plot_experiments(comet_api: comet_ml.API, experiments: APIExperiments, 
 
     layout = hv.Layout()
     for k, v in targets_data.items():
-        layout += hv.HeatMap(v, kdims=[p1_name, p2_name], vdims=k).sort().opts(title=k).redim.range(z=(0, None))
+        layout += hv.HeatMap(v, kdims=[p1_name, p2_name], vdims=k).sort().opts(title=k, cmap='greens').redim.range(z=(0, None))
     return layout.opts(fig_size=fig_size, framewise=True)
 
 

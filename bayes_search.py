@@ -22,10 +22,9 @@ config = {
 optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-13-horizontal-shifting")
 
 for experiment in optimizer.get_experiments():
-    horizontal_flip = experiment.get_parameter("horizontal_flip")
-    vertical_flip = experiment.get_parameter("vertical_flip")
-    experiment.set_name("{}_{}".format(vertical_flip, horizontal_flip))
+    width_shift_range = experiment.get_parameter("width_shift_range")
+    experiment.set_name("{}".format(width_shift_range))
     model = get_model()
-    training_datagen = ImageDataGenerator(horizontal_flip=horizontal_flip, vertical_flip=vertical_flip)
+    training_datagen = ImageDataGenerator(width_shift_range=width_shift_range)
     train_cifar10(batch_size=64, learning_rate=0.001, epochs=1000, experiment=experiment, model=model,
                   training_datagen=training_datagen)

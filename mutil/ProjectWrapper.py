@@ -4,7 +4,7 @@ from typing import Callable, TypeVar, List
 T = TypeVar('T')
 
 
-class ExperimentWrapper:
+class ProjectWrapper:
     def __init__(self, experiment_name: str):
         self.comet_api = comet_ml.API(api_key="cgss7piePhyFPXRw1J2uUEjkQ", rest_api_key="G9ts5ZxTui6k0ruDTtoQpqCkI")
         self.experiments = self.comet_api.get(experiment_name)

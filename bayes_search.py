@@ -5,8 +5,8 @@ from train import train_cifar10
 from models import get_model
 
 config = {
-    "algorithm": "grid",
-    "name": "Datagen - horizontal shifting",
+    "algorithm": "bayes",
+    "name": "Datagen - rotation",
 
     "spec": {
         "metric": "dev_acc",
@@ -14,17 +14,17 @@ config = {
     },
 
     "parameters": {
-        "width_shift_range": {"type": "float",
-                              "min": 0,
-                              "max": 0.5},
+        "rotation_range": {"type": "float",
+                           "min": 0,
+                           "max": 90},
     },
 }
-optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-13-horizontal-shifting")
+optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-15-rotation")
 
 for experiment in optimizer.get_experiments():
-    width_shift_range = experiment.get_parameter("width_shift_range")
-    experiment.set_name("{}".format(width_shift_range))
+    rotation_range = experiment.get_parameter("rotation_range")
+    experiment.set_name("{}".format(rotation_range))
     model = get_model()
-    training_datagen = ImageDataGenerator(width_shift_range=width_shift_range)
-    train_cifar10(batch_size=64, learning_rate=0.001, epochs=1000, experiment=experiment, model=model,
+    training_datagen = ImageDataGenerator(rotation_range=rotation_range)
+    train_cifar10(batch_size=64, learning_rate=0.001, epochs=10000, experiment=experiment, model=model,
                   training_datagen=training_datagen)

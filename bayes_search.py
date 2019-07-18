@@ -5,18 +5,17 @@ from train import train_cifar10
 from models import get_model
 
 config = {
-    "algorithm": "bayes",
+    "algorithm": "grid",
     "name": "Datagen - rotation",
 
     "spec": {
         "metric": "dev_acc",
-        "maxCombo": 5,
+        # "maxCombo": 5,
     },
 
     "parameters": {
-        "rotation_range": {"type": "float",
-                           "min": 0,
-                           "max": 90},
+        "rotation_range": {"type": "discrete",
+                           "values": [0, 10, 20, 30]},
     },
 }
 optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-15-rotation")

@@ -15,7 +15,7 @@ config = {
 
     "parameters": {
         "zoom_range": {"type": "discrete",
-                       "values": [0.3]},
+                       "values": [0.3, 0.2, 0.1, 0.0]},
     },
 }
 optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-16-zoom")

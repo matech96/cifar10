@@ -49,6 +49,7 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     y_test = Y[border_dev:, ]
 
     training_datagen.fit(x_train)
+    log_images(x_train, training_datagen, experiment)
 
     opt = Adam(lr=learning_rate)
     model.compile(loss='categorical_crossentropy',
@@ -90,3 +91,12 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     print('Test accuracy:', scores[1])
     experiment.log_metrics({"loss": scores[0],
                             "acc": scores[1]}, prefix="test")
+
+
+def log_images(x_train, training_datagen, experiment):
+    for i in range(10):
+        x_i = x_train[i,]
+        experiment.log_image(x_i, '{}'.format(i))
+        trf = training_datagen.get_random_transform(x_train.shape[1:])
+        trf_x = training_datagen.apply_transform(x_i, trf)
+        experiment.log_image(trf_x, '{}_trf'.format(i))

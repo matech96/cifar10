@@ -6,7 +6,7 @@ from models import get_model
 
 config = {
     "algorithm": "grid",
-    "name": "Datagen - zoom",
+    "name": "Datagen - whitening",
 
     "spec": {
         "metric": "dev_acc",
@@ -14,16 +14,16 @@ config = {
     },
 
     "parameters": {
-        "zoom_range": {"type": "discrete",
-                       "values": [0.3, 0.2, 0.1, 0.0]},
+        "zca_whitening": {"type": "discrete",
+                          "values": [0, 1]},
     },
 }
-optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-16-zoom")
+optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-17-whitening")
 
 for experiment in optimizer.get_experiments():
-    zoom_range = experiment.get_parameter("zoom_range")
-    experiment.set_name("{}".format(zoom_range))
+    zca_whitening = experiment.get_parameter("zca_whitening")
+    experiment.set_name("{}".format(zca_whitening))
     model = get_model()
-    training_datagen = ImageDataGenerator(zoom_range=zoom_range)
+    training_datagen = ImageDataGenerator(zca_whitening=zca_whitening)
     train_cifar10(batch_size=64, learning_rate=0.001, epochs=10000, experiment=experiment, model=model,
                   training_datagen=training_datagen)

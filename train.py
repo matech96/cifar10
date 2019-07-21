@@ -37,8 +37,6 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     random_indecies = shuffle(np.arange(n_data_points), random_state=42)
     X = X[random_indecies,]
     Y = Y[random_indecies,]
-    X = X.astype('float32') / 255.0
-    Y = Y.astype('float32')
     border_train = int(n_data_points * 0.7)
     border_dev = int(n_data_points * 0.9)
     x_train = X[:border_train, ]
@@ -50,7 +48,7 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
 
     training_datagen.fit(x_train)
     log_images(x_train, training_datagen, experiment)
-    # log_input_images(x_train, y_train, training_datagen, experiment)
+    log_input_images(x_train, y_train, training_datagen, experiment)
 
     opt = Adam(lr=learning_rate)
     model.compile(loss='categorical_crossentropy',

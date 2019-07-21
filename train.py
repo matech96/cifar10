@@ -15,8 +15,11 @@ import numpy as np
 from models import get_model
 from mutil import ElapsedTime
 
+from typing import Callable
+
 
 def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment: Experiment,
+                  preprocessing_fnc: Callable[[np.ndarray], np.ndarray],
                   model: Sequential = get_model(), initial_epoch: int = 0,
                   training_datagen: ImageDataGenerator = ImageDataGenerator()) -> None:
     model_plot_file_name = 'model.png'
@@ -64,20 +67,20 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     model.fit_generator(training_datagen.flow(x_train, y_train, batch_size=batch_size),
                         steps_per_epoch=len(x_train) / batch_size,
                         epochs=epochs,
-                        validation_data=(x_dev, y_dev),
+                        validation_data=(preprocessing_fnc(x_dev), y_dev),
                         shuffle=True,
                         callbacks=callbacks,
                         verbose=2,
                         initial_epoch=initial_epoch)
     model.save(model_path)
-    scores = model.evaluate(x_train, y_train, verbose=2)
+    scores = model.evaluate(preprocessing_fnc(x_train), y_train, verbose=2)
     print('Train loss:', scores[0])
     print('Train accuracy:', scores[1])
     experiment.log_metrics({"loss": scores[0],
                             "acc": scores[1]}, prefix="train")
 
     experiment.log_asset(model_path)
-    scores = model.evaluate(x_dev, y_dev, verbose=2)
+    scores = model.evaluate(preprocessing_fnc(x_dev), y_dev, verbose=2)
     print('Dev loss:', scores[0])
     print('Dev accuracy:', scores[1])
     experiment.log_metrics({"loss": scores[0],
@@ -85,7 +88,7 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
 
     timer = ElapsedTime("Test prediction")
     with timer:
-        scores = model.evaluate(x_test, y_test, verbose=2)
+        scores = model.evaluate(preprocessing_fnc(x_test), y_test, verbose=2)
     experiment.log_metric("test_inference_time", timer.elapsed_time_ms)
     print('Test loss:', scores[0])
     print('Test accuracy:', scores[1])

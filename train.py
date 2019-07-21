@@ -50,6 +50,7 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
 
     training_datagen.fit(x_train)
     log_images(x_train, training_datagen, experiment)
+    log_input_images(x_train, y_train, training_datagen, experiment)
 
     opt = Adam(lr=learning_rate)
     model.compile(loss='categorical_crossentropy',
@@ -61,6 +62,7 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     csv_cb = CSVLogger(log_path)
     early_stopping = EarlyStopping('val_acc', patience=250, restore_best_weights=True, verbose=2)
     callbacks = [csv_cb, early_stopping]
+
     model.fit_generator(training_datagen.flow(x_train, y_train, batch_size=batch_size),
                         steps_per_epoch=len(x_train) / batch_size,
                         epochs=epochs,
@@ -91,6 +93,12 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     print('Test accuracy:', scores[1])
     experiment.log_metrics({"loss": scores[0],
                             "acc": scores[1]}, prefix="test")
+
+
+def log_input_images(x_train, y_train, training_datagen, experiment):
+    imgs = training_datagen.flow(x_train, y_train, batch_size=10)[0][0]
+    for i in range(10):
+        experiment.log_image(imgs[i, :], 'smp_{}'.format(i))
 
 
 def log_images(x_train, training_datagen, experiment):

@@ -50,7 +50,7 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
 
     training_datagen.fit(x_train)
     log_images(x_train, training_datagen, experiment)
-    log_input_images(x_train, y_train, training_datagen, experiment)
+    # log_input_images(x_train, y_train, training_datagen, experiment)
 
     opt = Adam(lr=learning_rate)
     model.compile(loss='categorical_crossentropy',

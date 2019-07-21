@@ -24,7 +24,7 @@ for experiment in optimizer.get_experiments():
     brightness_range = experiment.get_parameter("brightness_range")
     experiment.set_name("{}".format(brightness_range))
     model = get_model()
-    training_datagen = ImageDataGenerator(brightness_range=[1, 1],
+    training_datagen = ImageDataGenerator(brightness_range=[1-brightness_range, 1+brightness_range],
                                           preprocessing_function=lambda x: x.astype('float32') / 255.0)
     train_cifar10(batch_size=64, learning_rate=0.001, epochs=10000, experiment=experiment, model=model,
                   training_datagen=training_datagen)

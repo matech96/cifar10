@@ -14,16 +14,16 @@ config = {
     },
 
     "parameters": {
-        "zca_whitening": {"type": "discrete",
-                          "values": [0]},
+        "brightness_range": {"type": "discrete",
+                             "values": [0.0, 0.1, 0.2, 0.3]},
     },
 }
-optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-17-whitening")
+optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-18-brightness")
 
 for experiment in optimizer.get_experiments():
-    zca_whitening = experiment.get_parameter("zca_whitening")
-    experiment.set_name("{}".format(zca_whitening))
+    brightness_range = experiment.get_parameter("brightness_range")
+    experiment.set_name("{}".format(brightness_range))
     model = get_model()
-    training_datagen = ImageDataGenerator(zca_whitening=zca_whitening)
+    training_datagen = ImageDataGenerator(brightness_range=[1-brightness_range, 1+brightness_range])
     train_cifar10(batch_size=64, learning_rate=0.001, epochs=10000, experiment=experiment, model=model,
                   training_datagen=training_datagen)

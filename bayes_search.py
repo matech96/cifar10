@@ -15,7 +15,7 @@ config = {
 
     "parameters": {
         "zca_whitening": {"type": "discrete",
-                          "values": [0, 1]},
+                          "values": [1]},
     },
 }
 optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-17-whitening")

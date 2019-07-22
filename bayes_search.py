@@ -6,7 +6,7 @@ from models import get_model
 
 config = {
     "algorithm": "grid",
-    "name": "Datagen - whitening",
+    "name": "Datagen - shear",
 
     "spec": {
         "metric": "dev_acc",
@@ -14,18 +14,18 @@ config = {
     },
 
     "parameters": {
-        "brightness_range": {"type": "discrete",
-                             "values": [0.0, 0.1, 0.2, 0.3]},
+        "shear_range": {"type": "discrete",
+                        "values": [0] + [math.degrees(math.tanh(r)) for r in [0.5, 1, 1.5]]},
     },
 }
-optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-18-brightness")
+optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-19-shear")
 
 for experiment in optimizer.get_experiments():
-    brightness_range = experiment.get_parameter("brightness_range")
-    experiment.set_name("{}".format(brightness_range))
+    shear_range = experiment.get_parameter("shear_range")
+    experiment.set_name("{}".format(shear_range))
     model = get_model()
     preprocessing_fnc = lambda x: x.astype('float32') / 255.0
-    training_datagen = ImageDataGenerator(brightness_range=[1-brightness_range, 1+brightness_range],
+    training_datagen = ImageDataGenerator(shear_range=shear_range,
                                           preprocessing_function=preprocessing_fnc)
     train_cifar10(batch_size=64, learning_rate=0.001, epochs=10000, experiment=experiment, model=model,
-                  training_datagen=training_datagen, preprocessing_fnc=preprocessing_fnc)
+                  training_datagen=training_datagen)

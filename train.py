@@ -19,9 +19,9 @@ from typing import Callable
 
 
 def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment: Experiment,
-                  preprocessing_fnc: Callable[[np.ndarray], np.ndarray],
                   model: Sequential = get_model(), initial_epoch: int = 0,
                   training_datagen: ImageDataGenerator = ImageDataGenerator()) -> None:
+    preprocessing_fnc = training_datagen.preprocessing_function
     model_plot_file_name = 'model.png'
     name = experiment.get_key()
     num_classes = 10

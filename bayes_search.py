@@ -3,11 +3,10 @@ from keras.preprocessing.image import ImageDataGenerator
 
 from train import train_cifar10
 from models import get_model
-import numpy as np
 
 config = {
     "algorithm": "grid",
-    "name": "Datagen - shear",
+    "name": "Datagen - brightness",
 
     "spec": {
         "metric": "dev_acc",
@@ -15,11 +14,11 @@ config = {
     },
 
     "parameters": {
-        "shear_range": {"type": "discrete",
-                        "values": [0.0] + np.degrees(np.tanh([0.5, 1, 1.5])).tolist()},
+        "brightness_range": {"type": "discrete",
+                             "values": [0.0, 0.1, 0.2, 0.3]},
     },
 }
-optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-19-shear")
+optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-20-brightness-repeat")
 
 for experiment in optimizer.get_experiments():
     shear_range = experiment.get_parameter("shear_range")

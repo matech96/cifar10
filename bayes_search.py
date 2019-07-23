@@ -21,11 +21,11 @@ config = {
 optimizer = Optimizer(config, api_key="cgss7piePhyFPXRw1J2uUEjkQ", project_name="cifar10-20-brightness-repeat")
 
 for experiment in optimizer.get_experiments():
-    shear_range = experiment.get_parameter("shear_range")
-    experiment.set_name("{}".format(shear_range))
+    brightness_range = experiment.get_parameter("brightness_range")
+    experiment.set_name("{}".format(brightness_range))
     model = get_model()
     preprocessing_fnc = lambda x: x.astype('float32') / 255.0
-    training_datagen = ImageDataGenerator(shear_range=shear_range,
+    training_datagen = ImageDataGenerator(brightness_range=[1 - brightness_range, 1 + brightness_range],
                                           preprocessing_function=preprocessing_fnc)
     train_cifar10(batch_size=64, learning_rate=0.001, epochs=10000, experiment=experiment, model=model,
                   training_datagen=training_datagen)

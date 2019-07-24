@@ -12,7 +12,7 @@ parameters = {
     'rotation_range': 0.0,
     'zoom_range': 0.0,
     'zca_whitening': False,
-    'brightness_range': 0.2,
+    'brightness_range': [0.8, 1.2],
     'shear_range': 0.0}
 
 experiment = Experiment(api_key="cgss7piePhyFPXRw1J2uUEjkQ",

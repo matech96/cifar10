@@ -6,7 +6,7 @@ from mutil.LearningRateDecay import PolynomialDecay
 from train import train_cifar10
 
 experiment = Experiment(api_key="cgss7piePhyFPXRw1J2uUEjkQ",
-                        project_name="cifar10-21-multi-aug", workspace="matech96")
+                        project_name="cifar10-23-lr-schedule", workspace="matech96")
 experiment.set_name("linear")
 epochs = 100
 learning_rate = 0.001

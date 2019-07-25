@@ -1,24 +1,23 @@
+from comet_ml import Experiment
 import os
 
-from keras.preprocessing.image import ImageDataGenerator
-
-from comet_ml import Experiment
 from keras import Sequential
 from keras.callbacks import CSVLogger, EarlyStopping, LearningRateScheduler
 from keras.optimizers import Adam
 from keras.utils import plot_model
+from keras.preprocessing.image import ImageDataGenerator
 
 from models import get_model
 from mutil import ElapsedTime
-
 from mutil.DataSets import get_cifar10_data
-from mutil.LearningRateDecay import LearningRateDecay
+
+from typing import Callable
 
 
 def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment: Experiment,
                   model: Sequential = get_model(), initial_epoch: int = 0,
                   training_datagen: ImageDataGenerator = ImageDataGenerator(),
-                  scheduler: LearningRateDecay = None) -> None:
+                  scheduler: Callable[[int], float] = None) -> None:
     preprocessing_fnc = training_datagen.preprocessing_function
     name = experiment.get_key()
     log_path, model_path = get_output_paths(name)

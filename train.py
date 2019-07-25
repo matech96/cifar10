@@ -39,6 +39,7 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     early_stopping_cb = EarlyStopping('val_acc', patience=250, restore_best_weights=True, verbose=2)
     callbacks = [csv_cb, early_stopping_cb]
     if scheduler is not None:
+        scheduler.experiment_log(experiment=experiment, epochs=list(range(epochs)))
         callbacks.append(scheduler)
 
     model.fit_generator(training_datagen.flow(data.x_train, data.y_train, batch_size=batch_size),

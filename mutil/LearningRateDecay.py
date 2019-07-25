@@ -3,6 +3,8 @@ import numpy as np
 from abc import abstractmethod
 from typing import List
 
+from comet_ml import Experiment
+
 
 class LearningRateDecay:
     def plot(self, epochs: List[int], title: str = "Learning Rate Schedule") -> hv.Layout:
@@ -15,6 +17,15 @@ class LearningRateDecay:
         lrs = [self(i) for i in epochs]
         data = {'learning rate': lrs, 'epoch': epochs}
         return hv.Curve(data, kdims='epoch', vdims='learning rate').opts(title=title)
+
+    def experiment_log(self, experiment: Experiment, epochs: List[int]):
+        """
+        Compute the set of learning rates for each corresponding epochs and logs it in experiment.
+        :param experiment: CometML experiment
+        :param epochs: Compute the set of learning rates for each corresponding epoch.
+        """
+        for i in epochs:
+            experiment.log_parameter('learning rate', self(i), i)
 
     @abstractmethod
     def __call__(self, epoch: int) -> float:

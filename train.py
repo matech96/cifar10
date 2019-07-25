@@ -4,7 +4,7 @@ from keras.preprocessing.image import ImageDataGenerator
 
 from comet_ml import Experiment
 from keras import Sequential
-from keras.callbacks import CSVLogger, EarlyStopping
+from keras.callbacks import CSVLogger, EarlyStopping, LearningRateScheduler
 from keras.optimizers import Adam
 from keras.utils import plot_model
 
@@ -12,11 +12,13 @@ from models import get_model
 from mutil import ElapsedTime
 
 from mutil.DataSets import get_cifar10_data
+from mutil.LearningRateDecay import LearningRateDecay
 
 
 def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment: Experiment,
                   model: Sequential = get_model(), initial_epoch: int = 0,
-                  training_datagen: ImageDataGenerator = ImageDataGenerator()) -> None:
+                  training_datagen: ImageDataGenerator = ImageDataGenerator(),
+                  scheduler: LearningRateDecay = None) -> None:
     preprocessing_fnc = training_datagen.preprocessing_function
     name = experiment.get_key()
     log_path, model_path = get_output_paths(name)
@@ -36,6 +38,8 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     csv_cb = CSVLogger(log_path)
     early_stopping_cb = EarlyStopping('val_acc', patience=250, restore_best_weights=True, verbose=2)
     callbacks = [csv_cb, early_stopping_cb]
+    if scheduler is not None:
+        callbacks.append(scheduler)
 
     model.fit_generator(training_datagen.flow(data.x_train, data.y_train, batch_size=batch_size),
                         steps_per_epoch=len(data.x_train) / batch_size,

@@ -26,12 +26,3 @@ training_datagen = ImageDataGenerator(preprocessing_function=preprocessing_fnc, 
 train_cifar10(batch_size=64, learning_rate=0.001, epochs=10000, experiment=experiment, model=model,
               training_datagen=training_datagen)
 
-experiment = Experiment(api_key="cgss7piePhyFPXRw1J2uUEjkQ",
-                        project_name="cifar10-22-batchnorm", workspace="matech96")
-experiment.set_name("default")
-
-model = get_model()
-preprocessing_fnc = lambda x: x.astype('float32') / 255.0
-training_datagen = ImageDataGenerator(preprocessing_function=preprocessing_fnc)
-train_cifar10(batch_size=64, learning_rate=0.001, epochs=10000, experiment=experiment, model=model,
-              training_datagen=training_datagen)

@@ -16,4 +16,4 @@ preprocessing_fnc = lambda x: x.astype('float32') / 255.0
 training_datagen = ImageDataGenerator(preprocessing_function=preprocessing_fnc)
 scheduler = PolynomialDecay(max_epochs=epochs, init_alpha=learning_rate, power=1.0)
 train_cifar10(batch_size=64, learning_rate=learning_rate, epochs=epochs, experiment=experiment, model=model,
-              training_datagen=training_datagen)
+              training_datagen=training_datagen, scheduler=scheduler)

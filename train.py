@@ -40,7 +40,7 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     callbacks = [csv_cb, early_stopping_cb]
     if scheduler is not None:
         scheduler.experiment_log(experiment=experiment, epochs=list(range(epochs)))
-        callbacks.append(scheduler)
+        callbacks.append(LearningRateScheduler(scheduler))
 
     model.fit_generator(training_datagen.flow(data.x_train, data.y_train, batch_size=batch_size),
                         steps_per_epoch=len(data.x_train) / batch_size,

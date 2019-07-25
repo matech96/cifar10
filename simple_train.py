@@ -7,8 +7,8 @@ from train import train_cifar10
 
 experiment = Experiment(api_key="cgss7piePhyFPXRw1J2uUEjkQ",
                         project_name="cifar10-23-lr-schedule", workspace="matech96")
-experiment.set_name("linear")
-epochs = 100
+experiment.set_name("linear200")
+epochs = 200
 learning_rate = 0.001
 
 model = get_model()

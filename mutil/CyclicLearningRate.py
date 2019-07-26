@@ -1,3 +1,7 @@
+from typing import List
+
+from comet_ml import Experiment
+
 from .LearningRateDecay import LearningRateDecay
 
 
@@ -18,3 +22,12 @@ class CyclicLearningRate:
         :return:
         """
         return self.learning_rate_decay(epoch % self.n_resets)
+
+    def experiment_log(self, experiment: Experiment, epochs: List[int]):
+        """
+        Compute the set of learning rates for each corresponding epochs and logs it in experiment.
+        :param experiment: CometML experiment
+        :param epochs: Compute the set of learning rates for each corresponding epoch.
+        """
+        for i in epochs:
+            experiment.log_parameter('learning rate', self(i), i)

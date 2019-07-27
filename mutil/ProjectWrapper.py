@@ -21,3 +21,6 @@ class ProjectWrapper:
 
     def get_csvs(self) -> List[pd.DataFrame]:
         return [pd.read_csv('results/{}.csv'.format(e.key)) for e in self.experiments]
+
+    def get_names(self) -> List[str]:
+        return [e.name for e in self.experiments]

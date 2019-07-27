@@ -4,6 +4,7 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/notebooks/cifar10-06-dropout" />
       <excludeFolder url="file://$MODULE_DIR$/notebooks/cifar10-07-initialization" />
+      <excludeFolder url="file://$MODULE_DIR$/notebooks/cifar10-23-lr-schedule" />
       <excludeFolder url="file://$MODULE_DIR$/notebooks/cifar10-long-term-early-stoppin-th" />
       <excludeFolder url="file://$MODULE_DIR$/results" />
     </content>

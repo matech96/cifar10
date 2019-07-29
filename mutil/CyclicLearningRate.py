@@ -31,3 +31,12 @@ class CyclicLearningRate:
         """
         for i in epochs:
             experiment.log_parameter('learning rate', self(i), i)
+
+
+class TentCyclicLearningRate(CyclicLearningRate):
+    def __call__(self, epoch: int) -> float:
+        tent_break_epoch = int(self.reset_epoch / 2)
+        if epoch % self.reset_epoch < tent_break_epoch:
+            return self.learning_rate_decay(epoch % self.reset_epoch)
+        else:
+            return self.learning_rate_decay(tent_break_epoch - (epoch % tent_break_epoch))

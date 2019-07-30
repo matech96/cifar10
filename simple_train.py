@@ -16,7 +16,7 @@ for epochs in [100, 200, 300, 400]:
     model = get_model()
     preprocessing_fnc = lambda x: x.astype('float32') / 255.0
     training_datagen = ImageDataGenerator(preprocessing_function=preprocessing_fnc)
-    scheduler = TentCyclicLearningRate(PolynomialDecay(max_epochs=epochs, init_alpha=learning_rate, power=0.5),
+    scheduler = TentCyclicLearningRate(PolynomialDecay(max_epochs=int(epochs/2), init_alpha=learning_rate, power=0.5),
                                        reset_epoch=epochs)
     train_cifar10(batch_size=64, learning_rate=learning_rate, epochs=epochs * n_resets, experiment=experiment,
                   model=model,

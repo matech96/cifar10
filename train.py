@@ -51,6 +51,7 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
                         initial_epoch=initial_epoch)
     model.save(model_path)
     experiment.log_asset(model_path)
+    experiment.log_asset(log_path)
 
     log_final_metrics(experiment, model, data, preprocessing_fnc)
 

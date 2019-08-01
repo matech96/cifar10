@@ -1,3 +1,5 @@
+from keras.callbacks import Callback
+
 class KeepBest(Callback):
     def __init__(self,
                  monitor='val_loss',

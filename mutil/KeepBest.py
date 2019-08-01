@@ -1,12 +1,12 @@
 from keras.callbacks import Callback
 
+
 class KeepBest(Callback):
     def __init__(self,
                  monitor='val_loss',
                  mode='auto', ):
         super(KeepBest, self).__init__()
 
-        self.best = np.Inf if self.monitor_op == np.less else -np.Inf
         self.monitor = monitor
         self.best_weights = None
 
@@ -31,6 +31,8 @@ class KeepBest(Callback):
         else:
             self.min_delta *= -1
 
+        self.best = np.Inf if self.monitor_op == np.less else -np.Inf
+
     def on_epoch_end(self, epoch, logs=None):
         current = self.get_monitor_value(logs)
         if current is None:
@@ -39,7 +41,6 @@ class KeepBest(Callback):
         if self.monitor_op(current, self.best):
             self.best = current
             self.best_weights = self.model.get_weights()
-
 
     def on_train_end(self, logs=None):
         self.model.set_weights(self.best_weights)

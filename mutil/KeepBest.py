@@ -1,4 +1,5 @@
 from keras.callbacks import Callback
+import numpy as np
 
 
 class KeepBest(Callback):

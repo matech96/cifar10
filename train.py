@@ -8,7 +8,7 @@ from keras.utils import plot_model
 from keras.preprocessing.image import ImageDataGenerator
 
 from models import get_model
-from mutil import ElapsedTime
+from mutil import ElapsedTime, KeepBest
 from mutil.DataSets import get_cifar10_data
 
 from typing import Callable
@@ -35,8 +35,9 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     log_model_plot(experiment, model)
 
     csv_cb = CSVLogger(log_path)
-    early_stopping_cb = EarlyStopping('val_acc', patience=epochs, restore_best_weights=True, verbose=2)
-    callbacks = [csv_cb, early_stopping_cb]
+    # early_stopping_cb = EarlyStopping('val_acc', patience=250, restore_best_weights=True, verbose=2)
+    keep_best_cb = KeepBest('val_acc')
+    callbacks = [csv_cb, keep_best_cb]  # [csv_cb, early_stopping_cb, keep_best_cb]
     if scheduler is not None:
         scheduler.experiment_log(experiment=experiment, epochs=list(range(epochs)))
         callbacks.append(LearningRateScheduler(scheduler))

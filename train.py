@@ -17,11 +17,12 @@ from typing import Callable, Optional
 def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment: Experiment,
                   model: Sequential = get_model(), initial_epoch: int = 0,
                   training_datagen: ImageDataGenerator = ImageDataGenerator(),
-                  scheduler: Callable[[int], float] = None, early_stopping_th: Optional[int] = 250) -> None:
+                  scheduler: Callable[[int], float] = None, early_stopping_th: Optional[int] = 250,
+                  data_portion: float = 1.0) -> None:
     preprocessing_fnc = training_datagen.preprocessing_function
     name = experiment.get_key()
     log_path, model_path = get_output_paths(name)
-    data = get_cifar10_data()
+    data = get_cifar10_data(data_portion=data_portion)
 
     training_datagen.fit(data.x_train)
     log_images(data.x_train, training_datagen, experiment)

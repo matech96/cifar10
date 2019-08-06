@@ -6,10 +6,10 @@ from models import get_model
 
 config = {
     "algorithm": "grid",
-    "name": "Batch size - power of 2",
+    "name": "Dataset size",
 
     "spec": {
-        "metric": "acc",
+        "metric": "val_acc",
     },
 
     "parameters": {

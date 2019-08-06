@@ -21,4 +21,4 @@ scheduler = CyclicLearningRate(PolynomialDecay(max_epochs=epochs, init_alpha=lea
                                reset_epoch=epochs)
 train_cifar10(batch_size=64, learning_rate=learning_rate, epochs=epochs * n_resets, experiment=experiment,
               model=model,
-              training_datagen=training_datagen, scheduler=scheduler)
+              training_datagen=training_datagen, scheduler=scheduler, early_stopping_th=None)

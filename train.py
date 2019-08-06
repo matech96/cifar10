@@ -11,13 +11,13 @@ from models import get_model
 from mutil import ElapsedTime, KeepBest
 from mutil.DataSets import get_cifar10_data
 
-from typing import Callable
+from typing import Callable, Optional
 
 
 def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment: Experiment,
                   model: Sequential = get_model(), initial_epoch: int = 0,
                   training_datagen: ImageDataGenerator = ImageDataGenerator(),
-                  scheduler: Callable[[int], float] = None) -> None:
+                  scheduler: Callable[[int], float] = None, early_stopping_th: Optional[int] = 250) -> None:
     preprocessing_fnc = training_datagen.preprocessing_function
     name = experiment.get_key()
     log_path, model_path = get_output_paths(name)
@@ -35,9 +35,11 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     log_model_plot(experiment, model)
 
     csv_cb = CSVLogger(log_path)
-    # early_stopping_cb = EarlyStopping('val_acc', patience=250, restore_best_weights=True, verbose=2)
     keep_best_cb = KeepBest('val_acc')
     callbacks = [csv_cb, keep_best_cb]  # [csv_cb, early_stopping_cb, keep_best_cb]
+    if early_stopping_th is not None:
+        early_stopping_cb = EarlyStopping('val_acc', patience=early_stopping_th, restore_best_weights=True, verbose=2)
+        callbacks.append(early_stopping_cb)
     if scheduler is not None:
         scheduler.experiment_log(experiment=experiment, epochs=list(range(epochs)))
         callbacks.append(LearningRateScheduler(scheduler))

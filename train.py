@@ -2,13 +2,13 @@ from comet_ml import Experiment
 import os
 
 from keras import Sequential
-from keras.callbacks import CSVLogger, EarlyStopping, LearningRateScheduler
+from keras.callbacks import CSVLogger, EarlyStopping, LearningRateScheduler, LambdaCallback
 from keras.optimizers import Adam
 from keras.utils import plot_model
 from keras.preprocessing.image import ImageDataGenerator
 
 from models import get_model
-from mutil import ElapsedTime, KeepBest
+from mutil import ElapsedTime, KeepBest, LearningRateFinder
 from mutil.DataSets import get_cifar10_data
 
 from typing import Callable, Optional
@@ -18,7 +18,7 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
                   model: Sequential = get_model(), initial_epoch: int = 0,
                   training_datagen: ImageDataGenerator = ImageDataGenerator(),
                   scheduler: Callable[[int], float] = None, early_stopping_th: Optional[int] = 250,
-                  data_portion: float = 1.0) -> None:
+                  data_portion: float = 1.0, find_lr: bool = False) -> None:
     preprocessing_fnc = training_datagen.preprocessing_function
     name = experiment.get_key()
     log_path, model_path = get_output_paths(name)
@@ -44,6 +44,10 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     if scheduler is not None:
         scheduler.experiment_log(experiment=experiment, epochs=list(range(epochs)))
         callbacks.append(LearningRateScheduler(scheduler))
+    if find_lr:
+        lrf = LearningRateFinder(model=model)
+        lrf.lrMult = (10e1 / 10e-10) ** (1.0 / (epochs * len(data.x_train) / batch_size))
+        callbacks = [LambdaCallback(on_batch_end=lambda batch, logs: lrf.on_batch_end(batch, logs))]
 
     model.fit_generator(training_datagen.flow(data.x_train, data.y_train, batch_size=batch_size),
                         steps_per_epoch=len(data.x_train) / batch_size,

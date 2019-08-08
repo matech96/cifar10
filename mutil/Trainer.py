@@ -17,9 +17,14 @@ from models import get_model
 
 
 class Trainer:
+
+
+    def __init__(self, experiment) -> None:
+        super().__init__()
+        self.experiment = experiment
+
     def train(self, experiment: Experiment, epochs: int, batch_size: int):
         self.initial_epoch = None
-        self.experiment = experiment
         training_datagen = self._create_training_data_generator()
         data = self._get_data()
         model = self._create_model()
@@ -81,8 +86,8 @@ class Trainer:
 
 
 class Cifar10Trainer(Trainer):
-    def __init__(self, learning_rate: float, data_portion: float = 1.0, scheduler: Callable[[int], float] = None) -> None:
-        super().__init__()
+    def __init__(self, experiment: Experiment, learning_rate: float, data_portion: float = 1.0, scheduler: Callable[[int], float] = None) -> None:
+        super().__init__(experiment)
         self.learning_rate = learning_rate
         self.data_portion = data_portion
         self.scheduler = scheduler

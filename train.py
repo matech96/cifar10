@@ -61,6 +61,9 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
     experiment.log_asset(model_path)
     experiment.log_asset(log_path)
 
+    if find_lr:
+        experiment.log_figure('lr vs acc', lrf.plot_loss())
+
     log_final_metrics(experiment, model, data, preprocessing_fnc)
 
 

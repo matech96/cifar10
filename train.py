@@ -46,7 +46,7 @@ def train_cifar10(batch_size: int, learning_rate: float, epochs: int, experiment
         callbacks.append(LearningRateScheduler(scheduler))
     if find_lr:
         lrf = LearningRateFinder(model=model)
-        lrf.lrMult = (10e1 / 10e-10) ** (1.0 / (epochs * len(data.x_train) / batch_size))
+        lrf.lrMult = (10e-1 / learning_rate) ** (1.0 / (epochs * len(data.x_train) / batch_size))
         callbacks = [LambdaCallback(on_batch_end=lambda batch, logs: lrf.on_batch_end(batch, logs))]
 
     model.fit_generator(training_datagen.flow(data.x_train, data.y_train, batch_size=batch_size),

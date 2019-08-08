@@ -1,15 +1,16 @@
 # import the necessary packages
-from keras.callbacks import LambdaCallback
+from keras.callbacks import LambdaCallback, Callback
 from keras import backend as K
 import matplotlib.pyplot as plt
 import numpy as np
 import tempfile
 
 
-class LearningRateFinder:
+class LearningRateFinder(Callback):
     def __init__(self, model, stopFactor=4, beta=0.98):
         # store the model, stop factor, and beta value (for computing
         # a smoothed, average loss)
+        super().__init__()
         self.model = model
         self.stopFactor = stopFactor
         self.beta = beta
@@ -37,13 +38,8 @@ class LearningRateFinder:
         self.batchNum = 0
         self.weightsFile = None
 
-    def is_data_iter(self, data):
-        # define the set of class types we will check for
-        iterClasses = ["NumpyArrayIterator", "DirectoryIterator",
-                       "Iterator", "Sequence"]
-
-        # return whether our data is an iterator
-        return data.__class__.__name__ in iterClasses
+    def on_batch_begin(self, batch, logs=None):
+        super().on_batch_begin(batch, logs)
 
     def on_batch_end(self, batch, logs):
         # grab the current learning rate and add log it to the list of
@@ -77,84 +73,6 @@ class LearningRateFinder:
         # increase the learning rate
         lr *= self.lrMult
         K.set_value(self.model.optimizer.lr, lr)
-
-    def find(self, trainData, startLR, endLR, epochs=None,
-             stepsPerEpoch=None, batchSize=32, sampleSize=2048,
-             verbose=1):
-        # reset our class-specific variables
-        self.reset()
-
-        # determine if we are using a data generator or not
-        useGen = self.is_data_iter(trainData)
-
-        # if we're using a generator and the steps per epoch is not
-        # supplied, raise an error
-        if useGen and stepsPerEpoch is None:
-            msg = "Using generator without supplying stepsPerEpoch"
-            raise Exception(msg)
-
-        # if we're not using a generator then our entire dataset must
-        # already be in memory
-        elif not useGen:
-            # grab the number of samples in the training data and
-            # then derive the number of steps per epoch
-            numSamples = len(trainData[0])
-            stepsPerEpoch = np.ceil(numSamples / float(batchSize))
-
-        # if no number of training epochs are supplied, compute the
-        # training epochs based on a default sample size
-        if epochs is None:
-            epochs = int(np.ceil(sampleSize / float(stepsPerEpoch)))
-
-        # compute the total number of batch updates that will take
-        # place while we are attempting to find a good starting
-        # learning rate
-        numBatchUpdates = epochs * stepsPerEpoch
-
-        # derive the learning rate multiplier based on the ending
-        # learning rate, starting learning rate, and total number of
-        # batch updates
-        self.lrMult = (endLR / startLR) ** (1.0 / numBatchUpdates)
-
-        # create a temporary file path for the model weights and
-        # then save the weights (so we can reset the weights when we
-        # are done)
-        self.weightsFile = tempfile.mkstemp()[1]
-        self.model.save_weights(self.weightsFile)
-
-        # grab the *original* learning rate (so we can reset it
-        # later), and then set the *starting* learning rate
-        origLR = K.get_value(self.model.optimizer.lr)
-        K.set_value(self.model.optimizer.lr, startLR)
-
-        # construct a callback that will be called at the end of each
-        # batch, enabling us to increase our learning rate as training
-        # progresses
-        callback = LambdaCallback(on_batch_end=lambda batch, logs:
-        self.on_batch_end(batch, logs))
-
-        # check to see if we are using a data iterator
-        if useGen:
-            self.model.fit_generator(
-                trainData,
-                steps_per_epoch=stepsPerEpoch,
-                epochs=epochs,
-                verbose=verbose,
-                callbacks=[callback])
-
-        # otherwise, our entire training data is already in memory
-        else:
-            # train our model using Keras' fit method
-            self.model.fit(
-                trainData[0], trainData[1],
-                batch_size=batchSize,
-                epochs=epochs,
-                callbacks=[callback],
-                verbose=verbose)
-
-        # restore the original model weights and learning rate
-        self.model.load_weights(self.weightsFile)
-        K.set_value(self.model.optimizer.lr, origLR)
 
     def plot_loss(self, skipBegin=1, skipEnd=1, title=""):
         # grab the learning rate and losses values to plot

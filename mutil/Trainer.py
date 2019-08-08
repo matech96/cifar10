@@ -6,11 +6,11 @@ import numpy as np
 from comet_ml import Experiment
 from keras.models import Sequential
 from keras.optimizers import Adam
-from keras.callbacks import Callback, CSVLogger, EarlyStopping, LearningRateScheduler
+from keras.callbacks import Callback, CSVLogger, EarlyStopping, LearningRateScheduler, LambdaCallback
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import plot_model
 
-from mutil import ElapsedTime, KeepBest
+from mutil import ElapsedTime, KeepBest, LearningRateFinder
 from mutil.DataSets import DataSets, get_cifar10_data
 
 from models import get_model
@@ -18,32 +18,32 @@ from models import get_model
 
 class Trainer:
 
-
     def __init__(self, experiment) -> None:
         super().__init__()
         self.experiment = experiment
 
     def train(self, experiment: Experiment, epochs: int, batch_size: int):
-        self.initial_epoch = None
-        training_datagen = self._create_training_data_generator()
-        data = self._get_data()
-        model = self._create_model()
-        callbacks = self._create_callbacks(epochs, batch_size)
+        self.initial_epoch = 0
+        self.training_datagen = self._create_training_data_generator()
+        self.data = self._get_data()
+        self.model = self._create_model()
+        self.callbacks = self._create_callbacks(epochs, batch_size)
 
         self._pre_training(epochs, batch_size)
 
-        model.fit_generator(training_datagen.flow(data.x_train, data.y_train, batch_size=batch_size),
-                            steps_per_epoch=len(data.x_train) / batch_size,
-                            epochs=epochs,
-                            validation_data=(training_datagen.preprocessing_function(data.x_dev), data.y_dev),
-                            shuffle=True,
-                            callbacks=callbacks,
-                            verbose=2,
-                            initial_epoch=self.initial_epoch)
+        self.model.fit_generator(
+            self.training_datagen.flow(self.data.x_train, self.data.y_train, batch_size=batch_size),
+            steps_per_epoch=len(self.data.x_train) / batch_size,
+            epochs=epochs,
+            validation_data=(self.training_datagen.preprocessing_function(self.data.x_dev), self.data.y_dev),
+            shuffle=True,
+            callbacks=self.callbacks,
+            verbose=2,
+            initial_epoch=self.initial_epoch)
 
-        self._log_final_metrics(experiment, model, data, training_datagen.preprocessing_function)
+        self._log_final_metrics(experiment, self.model, self.data, self.training_datagen.preprocessing_function)
 
-        self._post_training(model)
+        self._post_training(self.model)
 
     def _log_final_metrics(self, experiment: Experiment, model: Sequential, data: DataSets,
                            preprocessing_fnc: Callable[[np.ndarray], np.ndarray]):
@@ -86,7 +86,8 @@ class Trainer:
 
 
 class Cifar10Trainer(Trainer):
-    def __init__(self, experiment: Experiment, learning_rate: float, data_portion: float = 1.0, scheduler: Callable[[int], float] = None) -> None:
+    def __init__(self, experiment: Experiment, learning_rate: float, data_portion: float = 1.0,
+                 scheduler: Callable[[int], float] = None) -> None:
         super().__init__(experiment)
         self.learning_rate = learning_rate
         self.data_portion = data_portion
@@ -151,3 +152,16 @@ class Cifar10Trainer(Trainer):
         self.experiment.log_asset(self.log_path)
 
 
+class Cifar10FindLR(Cifar10Trainer):
+    def _create_callbacks(self, epochs: int, batch_size: int) -> List[Callback]:
+        callbacks = super()._create_callbacks(epochs, batch_size)
+        self.lrf = LearningRateFinder(model=self.model)
+        self.lrf.lrMult = (10e-1 / self.learning_rate) ** (1.0 / (epochs * len(self.data.x_train) / batch_size))
+        lrf_cb = LambdaCallback(on_batch_end=lambda batch, logs: self.lrf.on_batch_end(batch, logs))
+        callbacks.append(lrf_cb)
+
+        return callbacks
+
+    def _post_training(self, model) -> None:
+        super()._post_training(model)
+        self.experiment.log_figure('lr vs acc', self.lrf.plot_loss())

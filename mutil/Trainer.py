@@ -5,7 +5,7 @@ from typing import Callable, List, Tuple
 import numpy as np
 from comet_ml import Experiment
 from keras.models import Sequential
-from keras.optimizers import Adam
+from keras.optimizers import Adam, SGD
 from keras.callbacks import Callback, CSVLogger, EarlyStopping, LearningRateScheduler, LambdaCallback
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import plot_model
@@ -112,7 +112,7 @@ class Cifar10Trainer(Trainer):
         return get_cifar10_data(data_portion=self.data_portion)
 
     def _create_model(self) -> Sequential:
-        opt = Adam(lr=self.learning_rate)
+        opt = SGD(lr=self.learning_rate)
         model = get_model()
         model.compile(loss='categorical_crossentropy',
                       optimizer=opt,
@@ -153,12 +153,17 @@ class Cifar10Trainer(Trainer):
 
 
 class Cifar10FindLR(Cifar10Trainer):
+    def __init__(self, experiment: Experiment, learning_rate: float, data_portion: float = 1.0,
+                 scheduler: Callable[[int], float] = None, max_learning_rate: float = 10e-1) -> None:
+        super().__init__(experiment, learning_rate, data_portion, scheduler)
+        self.max_learning_rate = max_learning_rate
+
     def _create_callbacks(self, epochs: int, batch_size: int) -> List[Callback]:
         callbacks = super()._create_callbacks(epochs, batch_size)
         self.lrf = LearningRateFinder(model=self.model)
-        self.lrf.lrMult = (10e-1 / self.learning_rate) ** (1.0 / (epochs * len(self.data.x_train) / batch_size))
-        lrf_cb = LambdaCallback(on_batch_end=lambda batch, logs: self.lrf.on_batch_end(batch, logs))
-        callbacks.append(lrf_cb)
+        self.lrf.lrMult = (self.max_learning_rate / self.learning_rate) ** (
+                    1.0 / (epochs * len(self.data.x_train) / batch_size))
+        callbacks.append(self.lrf)
 
         return callbacks
 

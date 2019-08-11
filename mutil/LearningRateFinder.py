@@ -28,19 +28,6 @@ class LearningRateFinder(Callback):
         self.batchNum = 0
         self.weightsFile = None
 
-    def reset(self):
-        # re-initialize all variables from our constructor
-        self.lrs = []
-        self.losses = []
-        self.lrMult = 1
-        self.avgLoss = 0
-        self.bestLoss = 1e9
-        self.batchNum = 0
-        self.weightsFile = None
-
-    def on_batch_begin(self, batch, logs=None):
-        super().on_batch_begin(batch, logs)
-
     def on_batch_end(self, batch, logs):
         # grab the current learning rate and add log it to the list of
         # learning rates that we've tried

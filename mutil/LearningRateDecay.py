@@ -62,7 +62,7 @@ class StepDecay(LearningRateDecay):
 
 
 class PolynomialDecay(LearningRateDecay):
-    def __init__(self, max_epochs: int, init_alpha: float = 0.01, power: float = 1.0):
+    def __init__(self, max_epochs: int, init_alpha: float = 0.01, min_alpha: float = 0.0, power: float = 1.0):
         """
         Polynomial based learning rate decay.
         :param max_epochs: Number of epochs.
@@ -71,6 +71,7 @@ class PolynomialDecay(LearningRateDecay):
         """
         self.maxEpochs = max_epochs
         self.initAlpha = init_alpha
+        self.min_alpha = min_alpha
         self.power = power
 
     def __call__(self, epoch: int) -> float:
@@ -80,6 +81,6 @@ class PolynomialDecay(LearningRateDecay):
         :return:
         """
         decay = (1 - (epoch / float(self.maxEpochs))) ** self.power
-        alpha = self.initAlpha * decay
+        alpha = self.min_alpha + ((self.initAlpha - self.min_alpha) * decay)
 
         return float(alpha)
